@@ -1,9 +1,7 @@
 #!/usr/bin/env python3 
 
 import tweepy
-import requests
 from twit_img_secrets import *
-from os import makedirs
 import re
 
 auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
@@ -99,6 +97,9 @@ class TwitImgDL():
 		return self.media
 		
 if __name__ == "__main__":
+	from os import makedirs
+	import requests
+
 	n_id = 1254209651836502016
 	user = 'vupl4'
 	url = 'https://twitter.com/{}/status/{}'.format(user,n_id)
