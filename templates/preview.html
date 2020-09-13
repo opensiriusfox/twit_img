@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<h1>Output Images</h1>
+	{% for img in imgs %}
+		<h2>{{ img.fn }}</h2>
+		<a href="{{ img['path'] }}">
+			<img style="max-width:200px;max-height:200px" 
+				src="{{ img['path'] }}" />
+		</a>
+	{% endfor %}
+{% endblock %}

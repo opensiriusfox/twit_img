@@ -61,7 +61,7 @@ class TwitImgDL():
 	def scan(self, api=tweepy.API(auth)):
 		if len(self.media) > 0:
 			return self.media
-		resp = api.get_status(n_id)
+		resp = api.get_status(self._n_id)
 		
 		hasMedia = 'media' in resp.extended_entities.keys()
 		if hasMedia:
@@ -102,6 +102,9 @@ if __name__ == "__main__":
 
 	n_id = 1254209651836502016
 	user = 'vupl4'
+	
+	user = 'aokarimero'
+	n_id = 1288066770905915392
 	url = 'https://twitter.com/{}/status/{}'.format(user,n_id)
 
 	#n_id = 1255252210331660292
