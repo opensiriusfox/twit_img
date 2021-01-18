@@ -110,6 +110,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+.directory
 
 # Spyder project settings
 .spyderproject
@@ -129,3 +130,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 twit_img_secrets.py
+

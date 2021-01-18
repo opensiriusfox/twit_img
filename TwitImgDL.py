@@ -111,6 +111,8 @@ if __name__ == "__main__":
 	#user = 'sixveeceear'
 	#tw_text_str = 'blueart from 2018'
 
+	url = 'https://twitter.com/tatami111/status/1304361594667761664'
+
 	ob = TwitImgDL(url)
 	ob.fn_text_str = 'untitled_1'
 	ob.scan()
