@@ -39,18 +39,7 @@ def redirect():
 	imgs = []
 
 	for m in ob.media:
-		print("Fetching '{}'".format(m.url))
-		resp = requests.get(m.url)
-		fn_loc = '{}/{}'.format(dl_dir, m.fn)
-		print("Saving '{}' to {}".format(m.fn, dl_dir))
-		with open(fn_loc, 'wb') as img:
-			img.write(resp.content)
-
-		imgs.append({
-			'url': m.url,
-			'fn': m.fn,
-			'path': fn_loc
-		})
+		imgs.append(TwitImgDL.download(m, dl_dir))
 
 	return render_template('preview.html', imgs=imgs)
 

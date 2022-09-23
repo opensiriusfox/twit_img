@@ -1,14 +1,18 @@
 #!/usr/bin/env python3 
 
+from ast import Bytes
 import tweepy
 from twit_img_secrets import *
 import re
+from PIL import Image
+from io import BytesIO
+import requests
 
 auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
 
 from collections import namedtuple
 
-mediaMetadata = namedtuple('mediaMetadata', 'n w h url fn')
+mediaMetadata = namedtuple('mediaMetadata', 'n w h url_sz url_orig fn ext')
 
 class TwitImgDL():
 	_regex=re.compile('https://([^/]+)/([^/]+)/status/([0-9]+)')
@@ -18,6 +22,7 @@ class TwitImgDL():
 		self._user = username
 		self._n_id = tweet_num_id
 		self.fn_text_str = fn_text_str
+		self.media = []
 		self.media = []
 		if url != None:
 			self._parseURL()
@@ -79,26 +84,62 @@ class TwitImgDL():
 					saved['h'] = mx['sizes'][sz]['h']
 					saved['name'] = sz
 			#print(" Largest {} x {}".format(saved['w'], saved['h']))
-			img_url = "{}?name={}".format(mx['media_url'], saved['name'])
+			img_url_known = "{}?name={}".format(mx['media_url'], saved['name'])
+			img_url_orig = "{}?name={}".format(mx['media_url'], 'orig')
 			#print(' URL: \'{}\''.format(img_url))
 
-			fn = "Tw '{}'{} by {} {} {}x{}.{}".format(
+			fn = "Tw '{}'{} by {} {}".format(
 				self.fn_text_str,
 				'-{}'.format(imx+1) if len(media_list) > 1 else '',
 				resp.author.screen_name,
 				resp.created_at.strftime('%Y-%m-%d'),
-				saved['w'], saved['h'],
-				mx['media_url'][-3:]
 			)
 
 			self.media.append(
-				mediaMetadata(imx+1, saved['w'], saved['h'], img_url, fn)
+				mediaMetadata(imx+1, saved['w'], saved['h'], 
+					img_url_known, img_url_orig, fn, mx['media_url'][-3:]),
 			)
 		return self.media
+
+	@classmethod
+	def download(cls, m, dl_dir):
+		print("Fetching '{}'".format(m.url_orig))
+		# First try to get the "original" image
+		resp = requests.get(m.url_orig)
+		valid=False
+		if resp.status_code == 200:
+			# keep trying
+			h_img = Image.open(BytesIO(resp.content))
+			if h_img.size[0] >= m.w and h_img.size[1] >= m.h:
+				# This is bigger than the other one, use it!
+				sz = h_img.size
+				dat = resp.content
+				valid = True
+				url_used = m.url_orig
+
+		if not valid:
+			resp = requests.get(m.url_sz)
+			sz = (m.w, m.h)
+			dat = resp.content
+			url_used = m.url_sz
+
+		fn_full = '{} {}x{}.{}'.format(m.fn, sz[0], sz[1], m.ext)
+		fn_loc = '{}/{}'.format(dl_dir, fn_full)
+		print("Saving '{}' to {}".format(m.fn, dl_dir))
+		print("   size: {}x{}".format(sz[0], sz[1]))
+		with open(fn_loc, 'wb') as img:
+			img.write(resp.content)
+		
+		img_ret={
+			'url': url_used,
+			'fn': fn_full,
+			'path': fn_loc
+		}
+
+		return img_ret
 		
 if __name__ == "__main__":
 	from os import makedirs
-	import requests
 
 	n_id = 1254209651836502016
 	user = 'vupl4'
@@ -112,6 +153,8 @@ if __name__ == "__main__":
 	#tw_text_str = 'blueart from 2018'
 
 	url = 'https://twitter.com/tatami111/status/1304361594667761664'
+	url = 'https://twitter.com/novelance/status/1425283150410752003'
+	url = 'https://twitter.com/uyjpn/status/1572514801162817538'
 
 	ob = TwitImgDL(url)
 	ob.fn_text_str = 'untitled_1'
@@ -121,9 +164,4 @@ if __name__ == "__main__":
 	makedirs(dl_dir, exist_ok=True)
 
 	for m in ob.media:
-		print("Fetching '{}'".format(m.url))
-		resp = requests.get(m.url)
-		fn_loc = '{}/{}'.format(dl_dir, m.fn)
-		print("Saving '{}' to {}".format(m.fn, dl_dir))
-		with open(fn_loc, 'wb') as img:
-			img.write(resp.content)
+		TwitImgDL.download(m, dl_dir)
