@@ -12,11 +12,13 @@ from flask import send_file
 
 from downloadForm import downloadForm
 
+# Flask secret is some random key.
+# python -c 'import os; print(os.urandom(16))'
+from twit_img_secrets import flask_secret
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = \
-	b'\xaf|a`\xa1\x034@\x0f4J\xd4F\x89\x98\x15\x9c\x92' + \
-	b'\xd1\x96\x05\xbcu\r\xa5N6o\xa9\x12\x98\xe3'
+app.config['SECRET_KEY'] = flask_secret
 
 dl_dir = 'imgs'
 makedirs(dl_dir, exist_ok=True)

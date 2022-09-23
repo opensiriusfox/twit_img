@@ -8,7 +8,7 @@ from PIL import Image
 from io import BytesIO
 import requests
 
-auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+auth = tweepy.OAuth2AppHandler(consumer_key, consumer_secret)
 
 from collections import namedtuple
 
