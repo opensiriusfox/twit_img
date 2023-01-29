@@ -1,3 +1,5 @@
 tweepy>=4.10.0
 Flask>=2.0.0
 Pillow>=9.2.0
+python-dotenv>=0.21.0
+flask_wtf>=1.0.1

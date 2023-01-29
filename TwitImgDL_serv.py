@@ -55,5 +55,5 @@ def serve_image(image_file):
 	with open(fn_loc, 'rb') as bin_img:
 		return send_file(
 			io.BytesIO(bin_img.read()),
-			attachment_filename='')
+			download_name=image_file)
 

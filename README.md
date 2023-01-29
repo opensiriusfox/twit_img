@@ -10,6 +10,7 @@ Enabled by the hard work of the [Tweepy](https://www.tweepy.org/) developers.
     2. `source venv/bin/activate`
 2. install libs: `pip install -r requirments.txt`
 3. run: `flask run`
+4. Point your browser at the host URL.
 
 # `twit_img_secrets.py`
 The `twit_img_secrets.py` file takes the following form.
